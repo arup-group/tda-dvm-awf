@@ -1,5 +1,6 @@
 import argparse
 import glob
+import json
 
 def getArgs():
 	parser = argparse.ArgumentParser(description='AWF workflow for TDA/DVM.')
@@ -11,13 +12,13 @@ def getArgs():
 	return args
 
 def readFile(args):
-	filePath = glob.glob(f"{args.inputDir}/*.txt")[0]
-	with open(filePath) as f: 
-		data = f.read()
-	return data
+	dvi_filePath = glob.glob(f"{args.inputDir}/*.dvi")[0]
+	csv_filePath = glob.glob(f"{args.inputDir}/*.csv")[0]
+	return [dvi_filePath, csv_filePath]
 
-def reverseString(data):
-	return data[::-1]
+def dvm_exec(data):
+	res = json.dumps(data)
+	return res
 
 def writeFile(args, data):
 	with open(f"{args.outputDir}/output.txt", "w") as f: 
@@ -25,9 +26,10 @@ def writeFile(args, data):
 
 def main():
 	args = getArgs()
-	# data = readFile(args)
-	# data = reverseString(data)
-	# writeFile(args, data)
+	
+	data = readFile(args)
+	data = dvm_exec(data)
+	writeFile(args, data)
 	
 
 if __name__ == "__main__":
