@@ -3,16 +3,52 @@ import glob
 import json
 import subprocess
 import shutil
+import os 
+from pathlib import Path
+from inspect import getsourcefile
+from os.path import abspath
+from sys import platform
+import uuid
 
-def run_cli(exe, path):
-    print(f"starting {path}")
-    try:
-        subprocess.run([exe, path])
-        print(f"succeed {path}")
-    except: 
-        print(f"failed {path}")
-        return
+def invoke_at(path: str):
+    def parameterized(func):
+        def wrapper(*args, **kwargs):
+            cwd = os.getcwd()
+            os.chdir(path)
+            try:
+                ret = func(*args, **kwargs)
+            finally:
+                os.chdir(cwd)
+            return ret
+        return wrapper
+    return parameterized 
 
+def run_cli(exe, path, cwd):
+	print(f"starting {path}")
+	# very slow 
+	# subprocess.run([exe, path], cwd=cwd)
+	# faster
+	cwd_original = os.getcwd()
+	os.chdir(cwd)
+	# proc = subprocess.Popen(args=[exe, path], cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
+	proc = subprocess.Popen(args=[exe, path], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
+	outs, errs = proc.communicate()
+	print(outs, errs)
+	os.chdir(cwd_original)
+
+def run_cli_alt(exe, path, cwd):
+	print(f"starting {path}")
+	# very slow 
+	# subprocess.run([exe, path], cwd=cwd)
+	# faster
+	@invoke_at(cwd)
+	def run_cli_dir(exe, path, cwd):
+		# proc = subprocess.Popen(args=[exe, path], cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
+		proc = subprocess.Popen(args=[exe, path], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
+		outs, errs = proc.communicate()
+		print(outs, errs)
+	run_cli_dir(exe, path, cwd)
+	
 def getArgs():
 	parser = argparse.ArgumentParser(description='AWF workflow for TDA/DVM.')
 	parser.add_argument("-i", "--inputDir", help="path to input directory")
@@ -24,47 +60,101 @@ def getArgs():
 def findFiles(inputDir):
 	dvi_filePath = glob.glob(f"{inputDir}/*.dvi")[0]
 	csv_filePath = glob.glob(f"{inputDir}/*.csv")[0]
-	return dvi_filePath, csv_filePath
+	DvmWindowsPath = glob.glob(f"{inputDir}/DvmWindows.exe")[0]
+	DvmLinuxPath = glob.glob(f"{inputDir}/DvmLinux.exe")[0]
+	return dvi_filePath, csv_filePath, DvmWindowsPath, DvmLinuxPath
 
-def dvm_exec(data):
-	res = json.dumps(data)
-	return res
+def findFilesWithExt(inputDir, ext):
+	return glob.glob(f"{inputDir}/*.{ext}")
 
 def writeFile(args, data):
 	with open(f"{args.outputDir}/output.txt", "w") as f: 
 		f.write(data) 
 
 def copy_file_to_directory(file_path, directory_path):
+	print('copy_file_to_directory', file_path, directory_path)
+	if not os.path.exists(directory_path):
+		Path(directory_path).mkdir(parents=True, exist_ok=True)
 	shutil.copy(file_path, directory_path)
+	# subprocess.run(['cp', file_path, directory_path])
 
 def main():
 	args = getArgs()
 	
-	dvi_filePath, csv_filePath = findFiles(args.inputDir)
+	working_directory = Path(args.inputDir)
+	
+	dvi_filePath, csv_filePath, DvmWindowsPath, DvmLinuxPath = findFiles(working_directory)
 	# copy the files into path (this is redundant nescessary)
 	# for example r'0deg\21Mps\'
 	
-	temp_dvi_path = os.path.join(args.inputDir, args.dvi_path)
-	temp_csv_path = os.path.join(args.inputDir, args.dvi_path)
+	# check OS
+	# return the path of dvm exe on the target project directory
+	if platform == "win32":
+		dvm_exe = DvmWindowsPath
+	elif platform == "linux" or platform == "linux2":
+	  	dvm_exe = DvmLinuxPath
+	else:
+		print('OS not surported')
+		return
 
-	copy_file_to_directory(dvi_filePath, temp_dvi_path)
-	copy_file_to_directory(csv_filePath, temp_csv_path)
+	temp_dvi_directory = os.path.join(working_directory, args.dvi_path)
 	
-	dvm_exe = 'OasysDVM.exe'
+	copy_file_to_directory(dvi_filePath, temp_dvi_directory)
+	copy_file_to_directory(csv_filePath, temp_dvi_directory)
+	
+	
+	# dvm_exe = 'OasysDVM_linux_LMXPrimer.exe'
+	
+	# curr_dir_path = os.path.dirname(abspath(getsourcefile(lambda:0)))
+	
+	# print('current files directory ', curr_dir_path)
+	# current files directory  C:\Users\yun.sung\awf-1\awf_worker\runs\tda-dvm-awf-1.0.3
 
+	# dvm_path = os.path.join(curr_dir_path, dvm_exe)
+	
 	# copy dvm into path
-	copy_file_to_directory(os.path.join('.', dvm_exe), args.dvi_path)
+	# copy_file_to_directory(dvm_path, working_directory)
+	# copy_file_to_directory C:\Users\yun.sung\awf-1\awf_worker\runs\tda-dvm-awf-1.0.3\requirements.txt C:\Users\yun.sung\awf-1\awf_worker\dumps/run_5860/input
+
+	dvi_file_name = os.path.basename(dvi_filePath)
+	dvi_file_partial_path = os.path.join(args.dvi_path, dvi_file_name)
+	# -10deg\10Mps\C9_-10deg_10Mps.dvi
 	
-	temp_dvm_path = os.path.join(args.dvi_path, dvm_exe)
+	# check permission to execute from directory
+	print('working_directory', os.access(working_directory, os.X_OK))
+	print('dvi_file_partial_path', os.access(dvi_file_partial_path, os.X_OK))
 
+	print('dvm_exe', dvm_exe, 'dvi_file_partial_path', dvi_file_partial_path, 'working_directory', working_directory)
+	
 	# run dvm
-	run_cli(temp_dvm_path, temp_dvi_path)
+	run_cli(dvm_exe, os.path.join(working_directory, dvi_file_partial_path), working_directory)
+	
+	# temp_dvm_path = os.path.join(working_directory, dvm_exe)
+	
+	results1 = findFilesWithExt(working_directory, 'dvp')
+	results2 = findFilesWithExt(working_directory, 'log')
+	results3 = findFilesWithExt(working_directory, 'csv')
 
-	# delete dvm from path
-	os.remove(temp_dvm_path)
+	results_all = results1 + results2 + results3
 
 	# writeFile(args, data)
+	for result_file in results_all:
+		copy_file_to_directory(result_file, args.outputDir)
+
+	# delete the working_directory
+	# shutil.rmtree(working_directory)
+
+	# # zip directory and return string
+	# archive_filename = str(uuid.uuid4())
+	# archive_res = shutil.make_archive(archive_filename, 'zip', args.outputDir)
 	
+	# print(archive_res)
+
+	# # zip file to byte
+	# with open(archive_res, 'rb') as file_data:
+    # 	bytes_content = file_data.read()
+
+	# print(bytes_content)
 
 if __name__ == "__main__":
 	main()	
