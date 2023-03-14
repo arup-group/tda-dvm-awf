@@ -31,7 +31,8 @@ def run_cli(exe, path, cwd):
 	os.chmod(cwd, 0o777) # give permission to worker to execute
 	os.chmod(exe, 0o777) # give permission to worker to execute
 	# proc = subprocess.Popen(args=[exe, path], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
-	proc = subprocess.Popen(f"{exe} {path}", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+	# proc = subprocess.Popen(f"{exe} {path}", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+	proc = subprocess.Popen(f"{exe} {path}", shell=True)
 	outs, errs = proc.communicate()
 	print(outs, errs)
 
