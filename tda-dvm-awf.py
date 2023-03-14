@@ -25,28 +25,19 @@ def invoke_at(path: str):
 
 def run_cli(exe, path, cwd):
 	print(f"starting {path}")
-	# very slow 
-	# subprocess.run([exe, path], cwd=cwd)
-	# faster
+	# subprocess.run([exe, path], cwd=cwd) # slow 
 	cwd_original = os.getcwd()
-	os.chdir(cwd)
-	os.chmod(cwd, 0o777)
-	os.chmod(exe, 0o777)
-	# proc = subprocess.Popen(args=[exe, path], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
-	# proc = subprocess.Popen(f"{exe} {path}", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-	# proc = subprocess.Popen(f"{exe} {path}", stdout=subprocess.PIPE , shell=False)
-	proc = subprocess.Popen(args=[exe, path], stdout=subprocess.PIPE , shell=False)
-	
+	os.chdir(cwd) # change to working directory. required for result files to go to correct location.
+	os.chmod(cwd, 0o777) # give permission to worker to execute
+	os.chmod(exe, 0o777) # give permission to worker to execute
+	proc = subprocess.Popen(args=[exe, path], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
 	outs, errs = proc.communicate()
 	print(outs, errs)
 	os.chdir(cwd_original)
 
 def run_cli_alt(exe, path, cwd):
 	print(f"starting {path}")
-	# very slow 
-	# subprocess.run([exe, path], cwd=cwd)
-	# faster
-	@invoke_at(cwd)
+	@invoke_at(cwd) # decorator to get worker to execute in a correct directory
 	def run_cli_dir(exe, path, cwd):
 		# proc = subprocess.Popen(args=[exe, path], cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
 		proc = subprocess.Popen(args=[exe, path], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
