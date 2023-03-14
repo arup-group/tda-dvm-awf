@@ -33,7 +33,7 @@ def run_cli(exe, path, cwd):
 	# proc = subprocess.Popen(args=[exe, path], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
 	# proc = subprocess.Popen(f"{exe} {path}", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 	# proc = subprocess.Popen(f"{exe} {path}", stdout=subprocess.PIPE , shell=False)
-	proc = subprocess.Popen(args=["DvmLinux.exe"], stdout=subprocess.PIPE , shell=False)
+	proc = subprocess.Popen(args=["./DvmLinux.exe"], stdout=subprocess.PIPE , shell=False)
 	
 	outs, errs = proc.communicate()
 	print(outs, errs)
