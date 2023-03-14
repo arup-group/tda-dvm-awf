@@ -30,9 +30,13 @@ def run_cli(exe, path, cwd):
 	os.chdir(cwd) # change to working directory. required for result files to go to correct location.
 	os.chmod(cwd, 0o777) # give permission to worker to execute
 	os.chmod(exe, 0o777) # give permission to worker to execute
-	proc = subprocess.Popen(args=[exe, path], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
+	# proc = subprocess.Popen(args=[exe, path], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
+	proc = subprocess.Popen(f"{exe} {path}", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 	outs, errs = proc.communicate()
 	print(outs, errs)
+
+	# python_unix 12 b'************************************************* OasysDVM version 2.************************************************* ... Checking security for ****' None
+
 	os.chdir(cwd_original)
 
 def run_cli_alt(exe, path, cwd):
