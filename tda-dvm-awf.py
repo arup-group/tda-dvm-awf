@@ -30,8 +30,8 @@ def run_cli(exe, path, cwd):
 	# faster
 	cwd_original = os.getcwd()
 	os.chdir(cwd)
-	# proc = subprocess.Popen(args=[exe, path], cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
-	proc = subprocess.Popen(args=[exe, path], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
+	# proc = subprocess.Popen(args=[exe, path], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
+	proc = subprocess.Popen(f"{exe} {path}", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 	outs, errs = proc.communicate()
 	print(outs, errs)
 	os.chdir(cwd_original)
@@ -134,8 +134,9 @@ def main():
 	results1 = findFilesWithExt(working_directory, 'dvp')
 	results2 = findFilesWithExt(working_directory, 'log')
 	results3 = findFilesWithExt(working_directory, 'csv')
+	results4 = findFilesWithExt(working_directory, 'ptf')
 
-	results_all = results1 + results2 + results3
+	results_all = results1 + results2 + results3 + results4
 
 	# writeFile(args, data)
 	for result_file in results_all:
