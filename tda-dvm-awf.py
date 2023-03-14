@@ -32,7 +32,9 @@ def run_cli(exe, path, cwd):
 	os.chdir(cwd)
 	# proc = subprocess.Popen(args=[exe, path], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
 	# proc = subprocess.Popen(f"{exe} {path}", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-	proc = subprocess.Popen(f"{exe} {path}", shell=True)
+	# proc = subprocess.Popen(f"{exe} {path}", stdout=subprocess.PIPE , shell=False)
+	proc = subprocess.Popen(f"echo hello world", stdout=subprocess.PIPE , shell=False)
+	
 	outs, errs = proc.communicate()
 	print(outs, errs)
 	os.chdir(cwd_original)
