@@ -30,10 +30,12 @@ def run_cli(exe, path, cwd):
 	# faster
 	cwd_original = os.getcwd()
 	os.chdir(cwd)
+	os.chmod(cwd, 0o777)
+	os.chmod(exe, 0o777)
 	# proc = subprocess.Popen(args=[exe, path], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
 	# proc = subprocess.Popen(f"{exe} {path}", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 	# proc = subprocess.Popen(f"{exe} {path}", stdout=subprocess.PIPE , shell=False)
-	proc = subprocess.Popen(args=["./DvmLinux.exe"], stdout=subprocess.PIPE , shell=False)
+	proc = subprocess.Popen(args=[exe, path], stdout=subprocess.PIPE , shell=False)
 	
 	outs, errs = proc.communicate()
 	print(outs, errs)
