@@ -30,6 +30,7 @@ def run_cli(exe, path, cwd):
 	os.chdir(cwd) # change to working directory. required for result files to go to correct location.
 	os.chmod(cwd, 0o777) # give permission to worker to execute
 	os.chmod(exe, 0o777) # give permission to worker to execute
+	os.chmod("arup.lic", 0o777) # give permission to worker to execute
 	proc = subprocess.Popen(args=[exe, path], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
 	outs, errs = proc.communicate()
 	print(outs, errs)
