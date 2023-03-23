@@ -61,9 +61,11 @@ def findFiles(inputDir):
 	dvi_filePath = glob.glob(f"{inputDir}/*.dvi")[0]
 	csv_filePath = glob.glob(f"{inputDir}/*.csv")[0]
 	DvmWindowsPath = glob.glob(f"{inputDir}/DvmWindows.exe")[0]
-	DvmWindowsPath = DvmWindowsPath[0] if len(DvmWindowsPath) > 0 else ""
-	DvmLinuxPath = glob.glob(f"{inputDir}/DvmLinux.exe")
-	DvmLinuxPath = DvmLinuxPath[0] if len(DvmLinuxPath) > 0 else ""
+	DvmLinuxPath = glob.glob(f"{inputDir}/DvmLinux.exe")[0]
+	# DvmWindowsPath = glob.glob(f"{inputDir}/DvmWindows.exe")
+	# DvmWindowsPath = DvmWindowsPath[0] if len(DvmWindowsPath) > 0 else ""
+	# DvmLinuxPath = glob.glob(f"{inputDir}/DvmLinux.exe")
+	# DvmLinuxPath = DvmLinuxPath[0] if len(DvmLinuxPath) > 0 else ""
 	return dvi_filePath, csv_filePath, DvmWindowsPath, DvmLinuxPath
 
 def findFilesWithExt(inputDir, ext):
