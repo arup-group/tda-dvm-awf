@@ -108,8 +108,7 @@ def main():
 	if platform.system() == "Windows" or platform.system() == "win32":
 		dvm_exe = DvmWindowsPath
 	elif platform.system() == "Linux" or platform.system() == "linux2":
-	  	dvm_exe = DvmLinuxPath
-
+		dvm_exe = DvmLinuxPath
 		# write file about the system to file
 		os_json = platform.freedesktop_os_release()
 		os_json_path = os.path.join(working_directory, "os_info.json")
@@ -118,8 +117,6 @@ def main():
 	else:
 		print('OS not surported')
 		return
-
-
 
 	temp_dvi_directory = os.path.join(working_directory, args.dvi_path)
 	
