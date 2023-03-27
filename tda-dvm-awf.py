@@ -33,8 +33,9 @@ def run_cli(exe, path, cwd):
 	os.chmod("arup.lic", 0o777) # give permission to worker to execute
 	# set envrionemtn variable of ARUP_LICENSE_PATH = license path 
 	arup_lic_path = os.path.join(path, "arup.lic")
-	os.environ["ARUP_LICENSE_PATH"] = arup_lic_path
-	
+	# os.environ["ARUP_LICENSE_PATH"] = arup_lic_path
+	os.environ.setdefault("ARUP_LICENSE_PATH", arup_lic_path)
+
 	# ARUP_LICENSE_PATH = "ARUP_LICENSE_PATH=" + arup_lic_path
 	
 
