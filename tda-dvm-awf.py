@@ -32,14 +32,15 @@ def run_cli(exe, path, cwd):
 	os.chmod(exe, 0o777) # give permission to worker to execute
 	os.chmod("arup.lic", 0o777) # give permission to worker to execute
 	# set envrionemtn variable of ARUP_LICENSE_PATH = license path 
-
 	arup_lic_path = os.path.join(path, "arup.lic")
+	os.environ["ARUP_LICENSE_PATH"] = arup_lic_path
 	
-	ARUP_LICENSE_PATH = "ARUP_LICENSE_PATH=" + arup_lic_path
+	# ARUP_LICENSE_PATH = "ARUP_LICENSE_PATH=" + arup_lic_path
+	
 
-	proc0 = subprocess.Popen(args=["set", ARUP_LICENSE_PATH], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
-	outs0, errs0 = proc0.communicate()
-	print(outs0, errs0)
+	# proc0 = subprocess.Popen(args=["set", ARUP_LICENSE_PATH], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
+	# outs0, errs0 = proc0.communicate()
+	# print(outs0, errs0)
 
 	proc = subprocess.Popen(args=[exe, path], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
 	outs, errs = proc.communicate()
