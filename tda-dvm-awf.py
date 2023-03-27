@@ -7,7 +7,7 @@ import os
 from pathlib import Path
 from inspect import getsourcefile
 from os.path import abspath
-from sys import platform
+import platform
 import uuid
 
 def invoke_at(path: str):
@@ -105,13 +105,21 @@ def main():
 	
 	# check OS
 	# return the path of dvm exe on the target project directory
-	if platform == "win32":
+	if platform.system() == "Windows" or platform.system() == "win32":
 		dvm_exe = DvmWindowsPath
-	elif platform == "linux" or platform == "linux2":
+	elif platform.system() == "Linux" or platform.system() == "linux2":
 	  	dvm_exe = DvmLinuxPath
+
+		# write file about the system to file
+		os_json = platform.freedesktop_os_release()
+		os_json_path = os.path.join(working_directory, "os_info.json")
+		with open(os_json_path, "w") as os_json_file:
+			json.dump(os_json, os_json_file)
 	else:
 		print('OS not surported')
 		return
+
+
 
 	temp_dvi_directory = os.path.join(working_directory, args.dvi_path)
 	
@@ -152,7 +160,9 @@ def main():
 	results3 = findFilesWithExt(working_directory, 'csv')
 	results4 = findFilesWithExt(working_directory, 'ptf')
 
-	results_all = results1 + results2 + results3 + results4
+	results5 = findFilesWithExt(working_directory, 'json')
+
+	results_all = results1 + results2 + results3 + results4 + results5
 
 	# writeFile(args, data)
 	for result_file in results_all:
