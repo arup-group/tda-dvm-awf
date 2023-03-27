@@ -110,7 +110,13 @@ def main():
 	elif platform.system() == "Linux" or platform.system() == "linux2":
 		dvm_exe = DvmLinuxPath
 		# write file about the system to file
-		os_json = platform.freedesktop_os_release()
+
+		os_json = {
+			'release': platform.release(),
+			'system': platform.system(),
+			'version': platform.version(),
+			'uname': platform.uname(),
+		}
 		os_json_path = os.path.join(working_directory, "os_info.json")
 		with open(os_json_path, "w") as os_json_file:
 			json.dump(os_json, os_json_file)
