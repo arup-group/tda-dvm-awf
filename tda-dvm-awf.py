@@ -31,13 +31,9 @@ def run_cli(exe, path, cwd):
 	os.chmod(cwd, 0o777) # give permission to worker to execute
 	os.chmod(exe, 0o777) # give permission to worker to execute
 	# os.chmod("arup.lic", 0o777) # give permission to worker to execute
-
 	proc = subprocess.Popen(args=[exe, path], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
 	outs, errs = proc.communicate()
 	print(outs, errs)
-
-	# python_unix 12 b'************************************************* OasysDVM version 2.************************************************* ... Checking security for ****' None
-
 	os.chdir(cwd_original)
 
 def run_cli_alt(exe, path, cwd):
@@ -61,9 +57,16 @@ def getArgs():
 def findFiles(inputDir):
 	dvi_filePath = glob.glob(f"{inputDir}/*.dvi")[0]
 	csv_filePath = glob.glob(f"{inputDir}/*.csv")[0]
-	DvmWindowsPath = glob.glob(f"./DvmWindows.exe")[0]
-	DvmLinuxPath = glob.glob(f"./DvmLinux.exe")[0]
-	licensePath = glob.glob(f"./arup.lic")[0]
+
+	python_real_dir = os.path.dirname(os.path.realpath(__file__))
+	print(python_real_dir)
+	python_real_dir_2 = sys.path[0]
+	print(python_real_dir_2)
+	print(python_real_dir == python_real_dir_2)
+
+	DvmWindowsPath = glob.glob(os.path.join(python_real_dir, "/DvmWindows.exe"))[0]
+	DvmLinuxPath = glob.glob(os.path.join(python_real_dir, "/DvmLinux.exe"))[0]
+	licensePath = glob.glob(os.path.join(python_real_dir, "/arup.lic"))[0]
 	return dvi_filePath, csv_filePath, DvmWindowsPath, DvmLinuxPath, licensePath
 
 def findFilesWithExt(inputDir, ext):
