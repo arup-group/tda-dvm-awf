@@ -71,31 +71,25 @@ def copy_file_to_directory(file_path, directory_path):
 	if not os.path.exists(directory_path):
 		Path(directory_path).mkdir(parents=True, exist_ok=True)
 	shutil.copy(file_path, directory_path)
-	# subprocess.run(['cp', file_path, directory_path])
 
 def main():
 	args = getArgs()
 	
 	working_directory = Path(args.inputDir)
-	model_directory = Path(args.modelDir)
+	# model_directory = Path(args.modelDir)  # $MODEL-DIR$
 	dvi_path = args.dvi_path.lstrip('/')
 
 	print("working_directory", working_directory)
-	print("model_directory", model_directory)
+	# print("model_directory", model_directory)
 
 	dvi_filePath = findFilesWithExt(working_directory, "dvi")[0]
 	csv_filePath = findFilesWithExt(working_directory, "csv")[0]
-	# DvmWindowsPath = findFiles(model_directory, "DvmWindows.exe")[0]
-	# DvmLinuxPath = findFiles(model_directory, "DvmLinux.exe")[0]
-	# licensePath  = findFiles(model_directory, "arup.lic")[0]
 
 	# check OS
 	# return the path of dvm exe on the target project directory
 	if platform.system() == "Windows" or platform.system() == "win32":
-		# dvm_exe = DvmWindowsPath
 		dvm_exe = os.path.join(working_directory, "DvmWindows.exe")
 	elif platform.system() == "Linux" or platform.system() == "linux2":
-		# dvm_exe = DvmLinuxPath
 		dvm_exe = os.path.join(working_directory, "DvmLinux.exe")
 	else:
 		print('OS not surported')
@@ -105,9 +99,6 @@ def main():
 	
 	copy_file_to_directory(dvi_filePath, temp_dvi_directory)
 	copy_file_to_directory(csv_filePath, temp_dvi_directory)
-	
-	# copy_file_to_directory(dvm_exe, working_directory)
-	# copy_file_to_directory(licensePath, working_directory)
 	
 	temp_dvm_exe = os.path.join(working_directory, os.path.basename(dvm_exe))
 	
@@ -130,7 +121,6 @@ def main():
 
 	results_all = results1 + results2 + results3 + results4
 
-	# writeFile(args, data)
 	for result_file in results_all:
 		copy_file_to_directory(result_file, args.outputDir)
 
