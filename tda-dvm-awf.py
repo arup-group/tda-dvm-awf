@@ -85,30 +85,18 @@ def main():
 
 	dvi_filePath = findFilesWithExt(working_directory, "dvi")[0]
 	csv_filePath = findFilesWithExt(working_directory, "csv")[0]
-	DvmWindowsPath = findFiles(model_directory, "DvmWindows.exe")[0]
-	DvmLinuxPath = findFiles(model_directory, "DvmLinux.exe")[0]
-	licensePath  = findFiles(model_directory, "arup.lic")[0]
+	# DvmWindowsPath = findFiles(model_directory, "DvmWindows.exe")[0]
+	# DvmLinuxPath = findFiles(model_directory, "DvmLinux.exe")[0]
+	# licensePath  = findFiles(model_directory, "arup.lic")[0]
 
-	# copy the files into path (this is redundant but nescessary to ensure the result files get outputted to the working directory)
-	# for example r'0deg\21Mps\'
-	
 	# check OS
 	# return the path of dvm exe on the target project directory
 	if platform.system() == "Windows" or platform.system() == "win32":
-		dvm_exe = DvmWindowsPath
+		# dvm_exe = DvmWindowsPath
+		dvm_exe = os.path.join(working_directory, "DvmWindows.exe")
 	elif platform.system() == "Linux" or platform.system() == "linux2":
-		dvm_exe = DvmLinuxPath
-		# write file about the system to file
-
-		os_json = {
-			'release': platform.release(),
-			'system': platform.system(),
-			'version': platform.version(),
-			'uname': platform.uname(),
-		}
-		os_json_path = os.path.join(working_directory, "os_info.json")
-		with open(os_json_path, "w") as os_json_file:
-			json.dump(os_json, os_json_file)
+		# dvm_exe = DvmLinuxPath
+		dvm_exe = os.path.join(working_directory, "DvmLinux.exe")
 	else:
 		print('OS not surported')
 		return
@@ -118,8 +106,8 @@ def main():
 	copy_file_to_directory(dvi_filePath, temp_dvi_directory)
 	copy_file_to_directory(csv_filePath, temp_dvi_directory)
 	
-	copy_file_to_directory(dvm_exe, working_directory)
-	copy_file_to_directory(licensePath, working_directory)
+	# copy_file_to_directory(dvm_exe, working_directory)
+	# copy_file_to_directory(licensePath, working_directory)
 	
 	temp_dvm_exe = os.path.join(working_directory, os.path.basename(dvm_exe))
 	
@@ -139,9 +127,8 @@ def main():
 	results2 = findFilesWithExt(working_directory, 'log')
 	results3 = findFilesWithExt(working_directory, 'csv')
 	results4 = findFilesWithExt(working_directory, 'ptf')
-	results5 = findFilesWithExt(working_directory, 'json')
 
-	results_all = results1 + results2 + results3 + results4 + results5
+	results_all = results1 + results2 + results3 + results4
 
 	# writeFile(args, data)
 	for result_file in results_all:
