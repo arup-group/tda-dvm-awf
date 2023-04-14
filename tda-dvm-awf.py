@@ -9,6 +9,7 @@ from inspect import getsourcefile
 from os.path import abspath
 import platform
 import uuid
+import sys
 
 def invoke_at(path: str):
     def parameterized(func):
@@ -51,21 +52,13 @@ def getArgs():
 	parser.add_argument("-i", "--inputDir", help="path to input directory")
 	parser.add_argument("-p", "--dvi_path", help="path to dvi file")
 	parser.add_argument("-o", "--outputDir", help="path to output directory")
+	parser.add_argument("-m", "--modelDir", help="path to model directory")
 	args = parser.parse_args()
 	return args
 
-def findFiles(inputDir):
-	dvi_filePath = glob.glob(f"{inputDir}/*.dvi")[0]
-	csv_filePath = glob.glob(f"{inputDir}/*.csv")[0]
-
-	python_real_dir = os.path.dirname(os.path.realpath(__file__))
-	print(python_real_dir)
-
-	DvmWindowsPath = glob.glob(os.path.join(python_real_dir, "/DvmWindows.exe"))[0]
-	DvmLinuxPath = glob.glob(os.path.join(python_real_dir, "/DvmLinux.exe"))[0]
-	licensePath = glob.glob(os.path.join(python_real_dir, "/arup.lic"))[0]
-	return dvi_filePath, csv_filePath, DvmWindowsPath, DvmLinuxPath, licensePath
-
+def findFiles(inputDir, inputKey):
+	return glob.glob(os.path.join(inputDir, inputKey))
+	
 def findFilesWithExt(inputDir, ext):
 	return glob.glob(f"{inputDir}/*.{ext}")
 
@@ -84,8 +77,16 @@ def main():
 	args = getArgs()
 	
 	working_directory = Path(args.inputDir)
+	model_directory = Path(args.modelDir)
 	
-	dvi_filePath, csv_filePath, DvmWindowsPath, DvmLinuxPath, licensePath = findFiles(working_directory)
+	print("model_directory", model_directory)
+
+	dvi_filePath = findFiles(working_directory, "/*.dvi")[0]
+	csv_filePath = findFiles(working_directory, "/*.csv")[0]
+	DvmWindowsPath = findFiles(model_directory, "/DvmWindows.exe")[0]
+	DvmLinuxPath = findFiles(model_directory, "/DvmLinux.exe")[0]
+	licensePath  = findFiles(model_directory, "/arup.lic")[0]
+
 	# copy the files into path (this is redundant but nescessary to ensure the result files get outputted to the working directory)
 	# for example r'0deg\21Mps\'
 	
