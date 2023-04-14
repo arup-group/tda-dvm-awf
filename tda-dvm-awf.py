@@ -60,9 +60,6 @@ def findFiles(inputDir):
 
 	python_real_dir = os.path.dirname(os.path.realpath(__file__))
 	print(python_real_dir)
-	python_real_dir_2 = sys.path[0]
-	print(python_real_dir_2)
-	print(python_real_dir == python_real_dir_2)
 
 	DvmWindowsPath = glob.glob(os.path.join(python_real_dir, "/DvmWindows.exe"))[0]
 	DvmLinuxPath = glob.glob(os.path.join(python_real_dir, "/DvmLinux.exe"))[0]
