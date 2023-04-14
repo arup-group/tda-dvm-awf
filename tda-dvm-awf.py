@@ -78,6 +78,7 @@ def main():
 	
 	working_directory = Path(args.inputDir)
 	model_directory = Path(args.modelDir)
+	dvi_path = args.dvi_path.lstrip('/')
 
 	print("working_directory", working_directory)
 	print("model_directory", model_directory)
@@ -112,7 +113,7 @@ def main():
 		print('OS not surported')
 		return
 
-	temp_dvi_directory = os.path.join(working_directory, args.dvi_path)
+	temp_dvi_directory = os.path.join(working_directory, dvi_path)
 	
 	copy_file_to_directory(dvi_filePath, temp_dvi_directory)
 	copy_file_to_directory(csv_filePath, temp_dvi_directory)
@@ -123,7 +124,7 @@ def main():
 	temp_dvm_exe = os.path.join(working_directory, os.path.basename(dvm_exe))
 	
 	dvi_file_name = os.path.basename(dvi_filePath)
-	dvi_file_partial_path = os.path.join(args.dvi_path, dvi_file_name)
+	dvi_file_partial_path = os.path.join(dvi_path, dvi_file_name)
 	
 	# check permission to execute from directory
 	print('working_directory', os.access(working_directory, os.X_OK))
