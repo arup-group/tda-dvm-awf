@@ -52,7 +52,6 @@ def getArgs():
 	parser.add_argument("-i", "--inputDir", help="path to input directory")
 	parser.add_argument("-p", "--dvi_path", help="path to dvi file")
 	parser.add_argument("-o", "--outputDir", help="path to output directory")
-	parser.add_argument("-m", "--modelDir", help="path to model directory")
 	args = parser.parse_args()
 	return args
 
