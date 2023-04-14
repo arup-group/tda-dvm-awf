@@ -57,7 +57,7 @@ def getArgs():
 	return args
 
 def findFiles(inputDir, inputKey):
-	return glob.glob(os.path.join(inputDir, inputKey))
+	return glob.glob(f"{inputDir}/{inputKey}")
 	
 def findFilesWithExt(inputDir, ext):
 	return glob.glob(f"{inputDir}/*.{ext}")
@@ -78,14 +78,15 @@ def main():
 	
 	working_directory = Path(args.inputDir)
 	model_directory = Path(args.modelDir)
-	
+
+	print("working_directory", working_directory)
 	print("model_directory", model_directory)
 
-	dvi_filePath = findFiles(working_directory, "/*.dvi")[0]
-	csv_filePath = findFiles(working_directory, "/*.csv")[0]
-	DvmWindowsPath = findFiles(model_directory, "/DvmWindows.exe")[0]
-	DvmLinuxPath = findFiles(model_directory, "/DvmLinux.exe")[0]
-	licensePath  = findFiles(model_directory, "/arup.lic")[0]
+	dvi_filePath = findFilesWithExt(working_directory, "dvi")[0]
+	csv_filePath = findFilesWithExt(working_directory, "csv")[0]
+	DvmWindowsPath = findFiles(model_directory, "DvmWindows.exe")[0]
+	DvmLinuxPath = findFiles(model_directory, "DvmLinux.exe")[0]
+	licensePath  = findFiles(model_directory, "arup.lic")[0]
 
 	# copy the files into path (this is redundant but nescessary to ensure the result files get outputted to the working directory)
 	# for example r'0deg\21Mps\'
