@@ -52,6 +52,7 @@ def getArgs():
 	parser.add_argument("-i", "--inputDir", help="path to input directory")
 	parser.add_argument("-p", "--dvi_path", help="path to dvi file")
 	parser.add_argument("-o", "--outputDir", help="path to output directory")
+	parser.add_argument("-m", "--modelDir", help="path to output directory")
 	args = parser.parse_args()
 	return args
 
@@ -75,11 +76,11 @@ def main():
 	args = getArgs()
 	
 	working_directory = Path(args.inputDir)
-	# model_directory = Path(args.modelDir)  # $MODEL-DIR$
+	model_directory = Path(args.modelDir)  # $MODEL-DIR$
 	dvi_path = args.dvi_path.lstrip('/')
 
 	print("working_directory", working_directory)
-	# print("model_directory", model_directory)
+	print("model_directory", model_directory)
 
 	dvi_filePath = findFilesWithExt(working_directory, "dvi")[0]
 	csv_filePath = findFilesWithExt(working_directory, "csv")[0]
@@ -94,12 +95,20 @@ def main():
 		print('OS not surported')
 		return
 
+	# copy exe and license into working folder
+
+	dvm_exe_source = os.path.join(model_directory, os.path.basename(dvm_exe))
+	lic_source = os.path.join(model_directory, 'arup.lic')
+	copy_file_to_directory(dvm_exe_source, working_directory)
+	copy_file_to_directory(lic_source, working_directory)
+
 	temp_dvi_directory = os.path.join(working_directory, dvi_path)
 	
+	# copy input files into  folder path
 	copy_file_to_directory(dvi_filePath, temp_dvi_directory)
 	copy_file_to_directory(csv_filePath, temp_dvi_directory)
 	
-	temp_dvm_exe = os.path.join(working_directory, os.path.basename(dvm_exe))
+	# temp_dvm_exe = os.path.join(working_directory, os.path.basename(dvm_exe))
 	
 	dvi_file_name = os.path.basename(dvi_filePath)
 	dvi_file_partial_path = os.path.join(dvi_path, dvi_file_name)
@@ -108,10 +117,10 @@ def main():
 	print('working_directory', os.access(working_directory, os.X_OK))
 	print('dvi_file_partial_path', os.access(dvi_file_partial_path, os.X_OK))
 
-	print('dvm_exe', temp_dvm_exe, 'dvi_file_partial_path', dvi_file_partial_path, 'working_directory', working_directory)
+	print('dvm_exe', dvm_exe, 'dvi_file_partial_path', dvi_file_partial_path, 'working_directory', working_directory)
 	
 	# run dvm
-	run_cli(temp_dvm_exe, os.path.join(working_directory, dvi_file_partial_path), working_directory)
+	run_cli(dvm_exe, os.path.join(working_directory, dvi_file_partial_path), working_directory)
 		
 	results1 = findFilesWithExt(working_directory, 'dvp')
 	results2 = findFilesWithExt(working_directory, 'log')
